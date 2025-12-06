@@ -1,0 +1,109 @@
+@model CrmApp.Models.DTOs.CreateCustomerDto
+
+@{
+    ViewData["Title"] = "Yeni Müşteri";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-3">
+    <h1 class="h4 mb-0 text-gray-800">Yeni Müşteri</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Listeye Dön
+    </a>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Customers" asp-action="Index">Ana Sayfa</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Customers" asp-action="Index">Müşteriler</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Yeni Müşteri</li>
+    </ol>
+    </nav>
+
+<div class="row justify-content-center">
+    <div class="col-xl-8 col-lg-10">
+        <div class="card shadow mb-4">
+            <div class="card-header card-header-gradient">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="fw-bold text-white">Müşteri Bilgileri</span>
+                    <span class="badge bg-light text-dark">Zorunlu alanlar *</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input asp-for="FirstName" class="form-control" placeholder="Ad" autocomplete="given-name" />
+                                <label asp-for="FirstName">Ad</label>
+                            </div>
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input asp-for="LastName" class="form-control" placeholder="Soyad" autocomplete="family-name" />
+                                <label asp-for="LastName">Soyad</label>
+                            </div>
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mt-1">
+                        <div class="col-md-6">
+                            <div class="position-relative">
+                                <div class="form-floating">
+                                    <input asp-for="Email" class="form-control pe-5" placeholder="ornek@email.com" autocomplete="email" />
+                                    <label asp-for="Email">Email</label>
+                                </div>
+                                <i class="fas fa-envelope input-icon"></i>
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="position-relative">
+                                <div class="form-floating">
+                                    <input asp-for="PhoneNumber" class="form-control pe-5" placeholder="+90 5XX XXX XX XX" autocomplete="tel" />
+                                    <label asp-for="PhoneNumber">Telefon</label>
+                                </div>
+                                <i class="fas fa-phone input-icon"></i>
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mt-1">
+                        <div class="col-md-6">
+                            <label class="small font-weight-bold text-gray-700" for="TotalPurchaseAmount">Toplam Tutar</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input asp-for="TotalPurchaseAmount" class="form-control" inputmode="decimal" />
+                            </div>
+                            <span asp-validation-for="TotalPurchaseAmount" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input asp-for="LastPurchaseDate" type="date" class="form-control" placeholder="Tarih" />
+                                <label asp-for="LastPurchaseDate">Son Alışveriş Tarihi</label>
+                            </div>
+                            <span asp-validation-for="LastPurchaseDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

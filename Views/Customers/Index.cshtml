@@ -1,0 +1,293 @@
+@model IEnumerable<CrmApp.Models.DTOs.CustomerDto>
+
+@{
+    ViewData["Title"] = "Müşteriler";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Müşteri Listesi</h1>
+    <a asp-action="Create" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-plus fa-sm text-white-50"></i> Yeni Müşteri
+    </a>
+</div>
+
+<div class="row g-3">
+    <!-- Müşteri İstatistik Kartları -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Toplam Müşteri
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count()</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Toplam Ciro
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Sum(x => x.TotalPurchaseAmount).ToString("C0")</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content Row - Chart -->
+<div class="row g-3">
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Satış Grafiği (Son 7 Gün)</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area" style="height: 300px;">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Müşteri Verileri</h6>
+        <div class="dropdown no-arrow">
+            <button type="button" class="btn btn-success btn-sm mr-2" data-bs-toggle="modal" data-bs-target="#importExcelModal">
+                <i class="fas fa-file-excel"></i> Excel Yükle
+            </button>
+             <form asp-action="BulkInsert" method="post" class="d-inline mr-2">
+                <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('1000 adet rastgele müşteri eklenecek. Onaylıyor musunuz?')">
+                    <i class="fas fa-database"></i> 1000 Müşteri Bas
+                </button>
+            </form>
+            <a asp-action="ActiveCustomers" class="btn btn-info btn-sm">
+                <i class="fas fa-filter"></i> Son 30 Gün Aktif
+            </a>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="fas fa-sync"></i> Tümünü Göster
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" id="dataTableSearch" class="form-control" placeholder="Müşteri ara...">
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" id="dataTable" width="100%" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="border-0 rounded-start">ID</th>
+                        <th class="border-0">Ad Soyad</th>
+                        <th class="border-0">Email</th>
+                        <th class="border-0">Telefon</th>
+                        <th class="border-0">Son Alışveriş</th>
+                        <th class="border-0">Toplam Tutar</th>
+                        <th class="border-0 rounded-end">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="img-profile rounded-circle bg-gray-200 d-flex align-items-center justify-content-center mr-2" style="width: 35px; height: 35px; background-color: #eaecf4;">
+                                        <span class="small font-weight-bold text-secondary">@item.FirstName.Substring(0,1)@item.LastName.Substring(0,1)</span>
+                                    </div>
+                                    <div>
+                                        @item.FirstName @item.LastName
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@item.Email</td>
+                            <td>@(item.PhoneNumber ?? "-")</td>
+                            <td>
+                                @if (item.LastPurchaseDate.HasValue)
+                                {
+                                    <span class="badge @(item.LastPurchaseDate.Value > DateTime.Now.AddDays(-30) ? "bg-success" : "bg-secondary")">
+                                        @item.LastPurchaseDate.Value.ToShortDateString()
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </td>
+                            <td class="font-weight-bold">@item.TotalPurchaseAmount.ToString("C2")</td>
+                            <td>
+                                <a href="#" class="btn btn-info btn-circle btn-sm">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                                <button class="btn btn-danger btn-circle btn-sm" onclick="deleteCustomer(@item.Id)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- Excel Import Modal -->
+<div class="modal fade" id="importExcelModal" tabindex="-1" aria-labelledby="importExcelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importExcelModalLabel">Excel Dosyası Yükle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="ImportExcel" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Excel Dosyası Seç (.xlsx)</label>
+                        <input class="form-control" type="file" id="file" name="file" accept=".xlsx, .xls" required>
+                    </div>
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-info-circle"></i> Dosya formatı şu sütunları içermelidir: <br>
+                            <strong>Ad, Soyad, Email, Telefon, Toplam Tutar, Son Alışveriş Tarihi</strong>
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-primary">Yükle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Server-side search functionality
+        let searchTimeout;
+        $("#dataTableSearch").on("keyup", function() {
+            clearTimeout(searchTimeout);
+            var searchTerm = $(this).val();
+            
+            searchTimeout = setTimeout(function() {
+                $.ajax({
+                    url: '/Customers/Search',
+                    type: 'GET',
+                    data: { term: searchTerm },
+                    success: function(data) {
+                        var tbody = $("#dataTable tbody");
+                        tbody.empty();
+                        
+                        if (data.length === 0) {
+                            tbody.append('<tr><td colspan="7" class="text-center">Kayıt bulunamadı</td></tr>');
+                            return;
+                        }
+
+                        data.forEach(function(item) {
+                            var lastPurchase = item.lastPurchaseDate ? 
+                                new Date(item.lastPurchaseDate).toLocaleDateString('tr-TR') : '-';
+                            
+                            var lastPurchaseBadge = item.lastPurchaseDate && new Date(item.lastPurchaseDate) > new Date(new Date().setDate(new Date().getDate()-30)) ?
+                                'bg-success' : 'bg-secondary';
+
+                            var row = `
+                                <tr>
+                                    <td>${item.id}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="img-profile rounded-circle bg-gray-200 d-flex align-items-center justify-content-center mr-2" style="width: 35px; height: 35px; background-color: #eaecf4;">
+                                                <span class="small font-weight-bold text-secondary">${item.firstName.charAt(0)}${item.lastName.charAt(0)}</span>
+                                            </div>
+                                            <div>${item.firstName} ${item.lastName}</div>
+                                        </div>
+                                    </td>
+                                    <td>${item.email}</td>
+                                    <td>${item.phoneNumber || '-'}</td>
+                                    <td>
+                                        ${item.lastPurchaseDate ? `<span class="badge ${lastPurchaseBadge}">${lastPurchase}</span>` : '<span>-</span>'}
+                                    </td>
+                                    <td class="font-weight-bold">₺${item.totalPurchaseAmount.toFixed(2)}</td>
+                                    <td>
+                                        <a href="#" class="btn btn-info btn-circle btn-sm"><i class="fas fa-info-circle"></i></a>
+                                        <button class="btn btn-danger btn-circle btn-sm" onclick="deleteCustomer(${item.id})"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            `;
+                            tbody.append(row);
+                        });
+                    },
+                    error: function() {
+                        console.error("Arama sırasında hata oluştu.");
+                    }
+                });
+            }, 300); // 300ms debounce
+        });
+
+        function deleteCustomer(id) {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: "Bu müşteriyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74a3b',
+                cancelButtonColor: '#858796',
+                confirmButtonText: 'Evet, sil!',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Customers/Delete',
+                        type: 'POST',
+                        data: { id: id },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    'Silindi!',
+                                    response.message,
+                                    'success'
+                                ).then(() => {
+                                    location.reload(); // Tabloyu yenilemek için. İdealde satırı DOM'dan silebiliriz.
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Hata!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'Hata!',
+                                'Sunucu ile iletişim kurulamadı.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}
