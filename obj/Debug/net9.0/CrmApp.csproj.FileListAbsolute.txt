@@ -167,7 +167,8 @@ C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\refint\
 C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\CrmApp.pdb
 C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\CrmApp.genruntimeconfig.cache
 C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\ref\CrmApp.dll
-C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\compressed\m06tai4wbn-{0}-4tqyzicsnt-4tqyzicsnt.gz
 C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\bin\Debug\net9.0\ExcelDataReader.dll
 C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\bin\Debug\net9.0\ExcelDataReader.DataSet.dll
-C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\compressed\jdg55bpyuw-{0}-3byfvkj3uh-3byfvkj3uh.gz
+C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\CrmApp.sourcelink.json
+C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\compressed\m06tai4wbn-{0}-1jnohmz3s6-1jnohmz3s6.gz
+C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\compressed\jdg55bpyuw-{0}-3u4z3bxw8n-3u4z3bxw8n.gz

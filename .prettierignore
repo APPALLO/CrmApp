@@ -1,0 +1,22 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Global overrides
+**/bin
+**/obj
+**/Debug
+**/Release
+
+# Libraries
+wwwroot/lib/
+node_modules/
+
+# Minified files
+*.min.js
+*.min.css
+
+# Tooling
+.vscode/
+.vs/
+*.user

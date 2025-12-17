@@ -111,21 +111,22 @@ document.addEventListener("DOMContentLoaded", function() {
 // });
 
   // Toggle the side navigation
-  $("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    $("body").toggleClass("sidebar-toggled");
-    $(".sidebar").toggleClass("toggled");
-    if ($(".sidebar").hasClass("toggled")) {
-      $('.sidebar .collapse').collapse('hide');
-    };
-    
-    // Icon değişimini sağla
-    var icon = $("#sidebarToggle i");
-    if ($(".sidebar").hasClass("toggled")) {
-        icon.removeClass("fa-chevron-left").addClass("fa-chevron-right");
-    } else {
-        icon.removeClass("fa-chevron-right").addClass("fa-chevron-left");
-    }
+  $(document).ready(function() {
+    $("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $("body").toggleClass("sidebar-toggled");
+      $(".sidebar").toggleClass("toggled");
+      if ($(".sidebar").hasClass("toggled")) {
+        $('.sidebar .collapse').collapse('hide');
+      };
+      
+      // Icon değişimini sağla
+      var icon = $("#sidebarToggle i");
+      if ($(".sidebar").hasClass("toggled")) {
+          icon.removeClass("fa-chevron-left").addClass("fa-chevron-right");
+      } else {
+          icon.removeClass("fa-chevron-right").addClass("fa-chevron-left");
+      }
+    });
   });
-});

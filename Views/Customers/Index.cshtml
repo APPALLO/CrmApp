@@ -88,8 +88,15 @@
     </div>
     <div class="card-body">
         <div class="row mb-3">
-            <div class="col-md-6">
-                <input type="text" id="dataTableSearch" class="form-control" placeholder="Müşteri ara...">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <input type="text" id="dataTableSearch" class="form-control bg-light border-0 small" placeholder="Müşteri ara..." aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <span class="input-group-text bg-primary border-0 text-white">
+                            <i class="fas fa-search fa-sm"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="table-responsive">
@@ -98,11 +105,11 @@
                     <tr>
                         <th class="border-0 rounded-start">ID</th>
                         <th class="border-0">Ad Soyad</th>
-                        <th class="border-0">Email</th>
-                        <th class="border-0">Telefon</th>
-                        <th class="border-0">Son Alışveriş</th>
-                        <th class="border-0">Toplam Tutar</th>
-                        <th class="border-0 rounded-end">İşlemler</th>
+                        <th>Email</th>
+                        <th>Telefon</th>
+                        <th>Son Alışveriş</th>
+                        <th>Toplam Tutar</th>
+                        <th>İşlemler</th>
                     </tr>
                 </thead>
                 <tbody>
