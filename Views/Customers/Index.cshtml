@@ -1,122 +1,175 @@
-@model IEnumerable<CrmApp.Models.DTOs.CustomerDto>
+@model CrmApp.Models.Common.PagedResult<CrmApp.Models.DTOs.CustomerDto>
 
 @{
     ViewData["Title"] = "Müşteriler";
 }
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Müşteri Listesi</h1>
-    <a asp-action="Create" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-        <i class="fas fa-plus fa-sm text-white-50"></i> Yeni Müşteri
-    </a>
-</div>
-
-<div class="row g-3">
-    <!-- Müşteri İstatistik Kartları -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Toplam Müşteri
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count()</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-users fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Toplam Ciro
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Sum(x => x.TotalPurchaseAmount).ToString("C0")</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <h1 class="h3 mb-0 text-gray-800">Müşteriler</h1>
+    <div>
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Yeni Müşteri
+        </a>
+        <a asp-action="ImportExcel" class="btn btn-success shadow-sm ml-2">
+            <i class="fas fa-file-excel fa-sm text-white-50"></i> Excel Yükle
+        </a>
+        <form asp-action="BulkInsert" method="post" class="d-inline ml-2">
+             <button type="submit" class="btn btn-warning shadow-sm">
+                <i class="fas fa-random fa-sm text-white-50"></i> Örnek Veri Üret
+            </button>
+        </form>
+        <form asp-action="ResetDatabase" method="post" class="d-inline ml-2" onsubmit="return confirm('Tüm veriler silinecek ve ID sayaçları sıfırlanacak. Emin misiniz?');">
+             <button type="submit" class="btn btn-danger shadow-sm">
+                <i class="fas fa-trash-alt fa-sm text-white-50"></i> DB Sıfırla
+            </button>
+        </form>
     </div>
 </div>
 
-<!-- Content Row - Chart -->
-<div class="row g-3">
-    <div class="col-xl-12 col-lg-12">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Satış Grafiği (Son 7 Gün)</h6>
-            </div>
-            <div class="card-body">
-                <div class="chart-area" style="height: 300px;">
-                    <canvas id="salesChart"></canvas>
-                </div>
-            </div>
-        </div>
+<!-- Pagination Controls -->
+<div class="d-flex justify-content-between align-items-center mt-4">
+    <div class="text-muted small">
+        Toplam <strong>@Model.TotalCount</strong> kayıt, <strong>@Model.TotalPages</strong> sayfa. (Şu an: @Model.PageNumber)
     </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination pagination-sm mb-0">
+            @* Önceki Sayfa Butonu *@
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="1" title="İlk Sayfa">&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" title="Önceki">&lsaquo;</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                <li class="page-item disabled"><span class="page-link">&lsaquo;</span></li>
+            }
+
+            @{
+                int startPage = Math.Max(1, Model.PageNumber - 2);
+                int endPage = Math.Min(Model.TotalPages, Model.PageNumber + 2);
+
+                // Eğer toplam sayfa sayısı çok fazlaysa ve baştaysak, sonunu göstermek için aralığı kaydır
+                if (Model.TotalPages > 5 && Model.PageNumber <= 3)
+                {
+                    endPage = Math.Min(5, Model.TotalPages);
+                }
+                
+                // Eğer sondaysak, başını göstermek için aralığı kaydır
+                if (Model.TotalPages > 5 && Model.PageNumber >= Model.TotalPages - 2)
+                {
+                    startPage = Math.Max(1, Model.TotalPages - 4);
+                }
+            }
+
+            @* İlk sayfa her zaman görünsün mü? Opsiyonel. *@
+            @if (startPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="1">1</a>
+                </li>
+                @if (startPage > 2)
+                {
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                }
+            }
+
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                </li>
+            }
+
+            @if (endPage < Model.TotalPages)
+            {
+                @if (endPage < Model.TotalPages - 1)
+                {
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                }
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages">@Model.TotalPages</a>
+                </li>
+            }
+
+            @* Sonraki Sayfa Butonu *@
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" title="Sonraki">&rsaquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages" title="Son Sayfa">&raquo;</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled"><span class="page-link">&rsaquo;</span></li>
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<!-- Bulk Delete Button (Hidden by default) -->
+<div id="bulkDeleteContainer" class="mb-3" style="display: none;">
+    <button id="btnBulkDelete" class="btn btn-danger">
+        <i class="fas fa-trash"></i> Seçilenleri Sil
+    </button>
+    <span id="selectedCount" class="ml-2 text-muted"></span>
 </div>
 
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">Müşteri Verileri</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Müşteri Listesi</h6>
         <div class="dropdown no-arrow">
-            <button type="button" class="btn btn-success btn-sm mr-2" data-bs-toggle="modal" data-bs-target="#importExcelModal">
-                <i class="fas fa-file-excel"></i> Excel Yükle
-            </button>
-             <form asp-action="BulkInsert" method="post" class="d-inline mr-2">
-                <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('1000 adet rastgele müşteri eklenecek. Onaylıyor musunuz?')">
-                    <i class="fas fa-database"></i> 1000 Müşteri Bas
-                </button>
-            </form>
-            <a asp-action="ActiveCustomers" class="btn btn-info btn-sm">
-                <i class="fas fa-filter"></i> Son 30 Gün Aktif
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
             </a>
-            <a asp-action="Index" class="btn btn-secondary btn-sm">
-                <i class="fas fa-sync"></i> Tümünü Göster
-            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                <div class="dropdown-header">İşlemler:</div>
+                <a class="dropdown-item" href="#">Excel İndir</a>
+                <a class="dropdown-item" href="#">PDF İndir</a>
+            </div>
         </div>
     </div>
     <div class="card-body">
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <input type="text" id="dataTableSearch" class="form-control bg-light border-0 small" placeholder="Müşteri ara..." aria-label="Search" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                        <span class="input-group-text bg-primary border-0 text-white">
-                            <i class="fas fa-search fa-sm"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="table-responsive">
-            <table class="table table-hover align-middle" id="dataTable" width="100%" cellspacing="0">
-                <thead class="table-light">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
                     <tr>
-                        <th class="border-0 rounded-start">ID</th>
-                        <th class="border-0">Ad Soyad</th>
-                        <th>Email</th>
+                        <th style="width: 40px;">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selectAll">
+                            </div>
+                        </th>
+                        <th>Sıra</th>
+                        <th>Müşteri</th>
+                        <th>E-posta</th>
                         <th>Telefon</th>
-                        <th>Son Alışveriş</th>
                         <th>Toplam Tutar</th>
+                        <th>Son İşlem</th>
                         <th>İşlemler</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @{ int rowNo = (Model.PageNumber - 1) * Model.PageSize; }
+                    @foreach (var item in Model.Items)
                     {
+                        rowNo++;
                         <tr>
-                            <td>@item.Id</td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input customer-select" type="checkbox" value="@item.Id">
+                                </div>
+                            </td>
+                            <td>
+                                <span class="font-weight-bold">@rowNo</span>
+                            </td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="img-profile rounded-circle bg-gray-200 d-flex align-items-center justify-content-center mr-2" style="width: 35px; height: 35px; background-color: #eaecf4;">
@@ -128,25 +181,23 @@
                                 </div>
                             </td>
                             <td>@item.Email</td>
-                            <td>@(item.PhoneNumber ?? "-")</td>
+                            <td>@item.PhoneNumber</td>
+                            <td>@item.TotalPurchaseAmount.ToString("C2")</td>
                             <td>
-                                @if (item.LastPurchaseDate.HasValue)
+                                @if(item.LastPurchaseDate.HasValue)
                                 {
-                                    <span class="badge @(item.LastPurchaseDate.Value > DateTime.Now.AddDays(-30) ? "bg-success" : "bg-secondary")">
-                                        @item.LastPurchaseDate.Value.ToShortDateString()
-                                    </span>
+                                    <span>@item.LastPurchaseDate.Value.ToString("dd.MM.yyyy")</span>
                                 }
                                 else
                                 {
-                                    <span>-</span>
+                                    <span class="text-muted">-</span>
                                 }
                             </td>
-                            <td class="font-weight-bold">@item.TotalPurchaseAmount.ToString("C2")</td>
                             <td>
-                                <a href="#" class="btn btn-info btn-circle btn-sm">
-                                    <i class="fas fa-info-circle"></i>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-circle btn-sm" title="Düzenle">
+                                    <i class="fas fa-edit"></i>
                                 </a>
-                                <button class="btn btn-danger btn-circle btn-sm" onclick="deleteCustomer(@item.Id)">
+                                <button onclick="deleteCustomer(@item.Id)" class="btn btn-danger btn-circle btn-sm" title="Sil">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -158,143 +209,107 @@
     </div>
 </div>
 
-</div>
-
-<!-- Excel Import Modal -->
-<div class="modal fade" id="importExcelModal" tabindex="-1" aria-labelledby="importExcelModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="importExcelModalLabel">Excel Dosyası Yükle</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form asp-action="ImportExcel" method="post" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="file" class="form-label">Excel Dosyası Seç (.xlsx)</label>
-                        <input class="form-control" type="file" id="file" name="file" accept=".xlsx, .xls" required>
-                    </div>
-                    <div class="alert alert-info">
-                        <small>
-                            <i class="fas fa-info-circle"></i> Dosya formatı şu sütunları içermelidir: <br>
-                            <strong>Ad, Soyad, Email, Telefon, Toplam Tutar, Son Alışveriş Tarihi</strong>
-                        </small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                    <button type="submit" class="btn btn-primary">Yükle</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
     <script>
-        // Server-side search functionality
-        let searchTimeout;
-        $("#dataTableSearch").on("keyup", function() {
-            clearTimeout(searchTimeout);
-            var searchTerm = $(this).val();
-            
-            searchTimeout = setTimeout(function() {
-                $.ajax({
-                    url: '/Customers/Search',
-                    type: 'GET',
-                    data: { term: searchTerm },
-                    success: function(data) {
-                        var tbody = $("#dataTable tbody");
-                        tbody.empty();
-                        
-                        if (data.length === 0) {
-                            tbody.append('<tr><td colspan="7" class="text-center">Kayıt bulunamadı</td></tr>');
-                            return;
-                        }
-
-                        data.forEach(function(item) {
-                            var lastPurchase = item.lastPurchaseDate ? 
-                                new Date(item.lastPurchaseDate).toLocaleDateString('tr-TR') : '-';
-                            
-                            var lastPurchaseBadge = item.lastPurchaseDate && new Date(item.lastPurchaseDate) > new Date(new Date().setDate(new Date().getDate()-30)) ?
-                                'bg-success' : 'bg-secondary';
-
-                            var row = `
-                                <tr>
-                                    <td>${item.id}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="img-profile rounded-circle bg-gray-200 d-flex align-items-center justify-content-center mr-2" style="width: 35px; height: 35px; background-color: #eaecf4;">
-                                                <span class="small font-weight-bold text-secondary">${item.firstName.charAt(0)}${item.lastName.charAt(0)}</span>
-                                            </div>
-                                            <div>${item.firstName} ${item.lastName}</div>
-                                        </div>
-                                    </td>
-                                    <td>${item.email}</td>
-                                    <td>${item.phoneNumber || '-'}</td>
-                                    <td>
-                                        ${item.lastPurchaseDate ? `<span class="badge ${lastPurchaseBadge}">${lastPurchase}</span>` : '<span>-</span>'}
-                                    </td>
-                                    <td class="font-weight-bold">₺${item.totalPurchaseAmount.toFixed(2)}</td>
-                                    <td>
-                                        <a href="#" class="btn btn-info btn-circle btn-sm"><i class="fas fa-info-circle"></i></a>
-                                        <button class="btn btn-danger btn-circle btn-sm" onclick="deleteCustomer(${item.id})"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                            `;
-                            tbody.append(row);
-                        });
-                    },
-                    error: function() {
-                        console.error("Arama sırasında hata oluştu.");
-                    }
-                });
-            }, 300); // 300ms debounce
-        });
-
+        // Delete Customer
         function deleteCustomer(id) {
             Swal.fire({
                 title: 'Emin misiniz?',
-                text: "Bu müşteriyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz!",
+                text: "Bu müşteriyi silmek istediğinize emin misiniz?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#e74a3b',
                 cancelButtonColor: '#858796',
-                confirmButtonText: 'Evet, sil!',
+                confirmButtonText: 'Evet, Sil!',
                 cancelButtonText: 'İptal'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/Customers/Delete',
+                        url: '/Customers/Delete/' + id,
                         type: 'POST',
-                        data: { id: id },
-                        success: function(response) {
-                            if (response.success) {
-                                Swal.fire(
-                                    'Silindi!',
-                                    response.message,
-                                    'success'
-                                ).then(() => {
-                                    location.reload(); // Tabloyu yenilemek için. İdealde satırı DOM'dan silebiliriz.
-                                });
-                            } else {
-                                Swal.fire(
-                                    'Hata!',
-                                    response.message,
-                                    'error'
-                                );
-                            }
+                        success: function(result) {
+                            Swal.fire(
+                                'Silindi!',
+                                'Müşteri başarıyla silindi.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
                         },
                         error: function() {
                             Swal.fire(
                                 'Hata!',
-                                'Sunucu ile iletişim kurulamadı.',
+                                'Bir hata oluştu.',
                                 'error'
                             );
                         }
                     });
                 }
-            });
+            })
         }
+
+        $(document).ready(function() {
+            // Select All Checkbox
+            $("#selectAll").on('change', function() {
+                $(".customer-select").prop('checked', $(this).prop('checked'));
+                updateBulkDeleteButton();
+            });
+
+            // Individual Checkbox
+            $(document).on('change', '.customer-select', function() {
+                var allChecked = $(".customer-select:checked").length === $(".customer-select").length;
+                $("#selectAll").prop('checked', allChecked);
+                updateBulkDeleteButton();
+            });
+
+            function updateBulkDeleteButton() {
+                var count = $(".customer-select:checked").length;
+                if (count > 0) {
+                    $("#bulkDeleteContainer").fadeIn();
+                    $("#selectedCount").text(count + " seçili");
+                } else {
+                    $("#bulkDeleteContainer").fadeOut();
+                }
+            }
+
+            // Bulk Delete Action
+            $("#btnBulkDelete").on('click', function() {
+                var selectedIds = $(".customer-select:checked").map(function() {
+                    return parseInt($(this).val());
+                }).get();
+
+                if (selectedIds.length === 0) return;
+
+                Swal.fire({
+                    title: 'Toplu Silme',
+                    text: `${selectedIds.length} adet müşteriyi silmek istediğinize emin misiniz?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e74a3b',
+                    cancelButtonColor: '#858796',
+                    confirmButtonText: 'Evet, Hepsini Sil!',
+                    cancelButtonText: 'İptal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/Customers/BulkDelete',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(selectedIds),
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire('Silindi!', response.message, 'success').then(() => location.reload());
+                                } else {
+                                    Swal.fire('Hata!', response.message, 'error');
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Hata!', 'Sunucu hatası oluştu.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+        });
     </script>
 }

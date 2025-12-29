@@ -329,6 +329,17 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 6px 10px -1px rgba(79, 70, 229, 0.4);
 }
 
+.btn-white {
+    background-color: #fff;
+    color: var(--text-main);
+    border: 1px solid #e2e8f0;
+}
+
+.btn-white:hover {
+    background-color: #f8fafc;
+    color: var(--primary);
+}
+
 .btn-circle {
     width: 36px;
     height: 36px;
@@ -370,6 +381,11 @@ h1, h2, h3, h4, h5, h6 {
     background: #f8fafc;
     border-color: #e2e8f0;
     color: #64748b;
+}
+
+/* Typography Utilities */
+.text-xs {
+    font-size: 0.75rem;
 }
 
 /* Modals */

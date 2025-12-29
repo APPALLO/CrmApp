@@ -170,5 +170,6 @@ C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\ref\Crm
 C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\bin\Debug\net9.0\ExcelDataReader.dll
 C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\bin\Debug\net9.0\ExcelDataReader.DataSet.dll
 C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\CrmApp.sourcelink.json
-C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\compressed\m06tai4wbn-{0}-1jnohmz3s6-1jnohmz3s6.gz
 C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\compressed\jdg55bpyuw-{0}-3u4z3bxw8n-3u4z3bxw8n.gz
+C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\compressed\m06tai4wbn-{0}-av12kuzctv-av12kuzctv.gz
+C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\obj\Debug\net9.0\compressed\a8i7t5iu0t-{0}-hbdq6feph3-hbdq6feph3.gz

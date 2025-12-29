@@ -1,0 +1,176 @@
+@{
+    ViewData["Title"] = "Excel ile Müşteri Yükle";
+}
+
+<div class="row justify-content-center">
+    <div class="col-xl-6 col-lg-8">
+        
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h1 class="h3 text-gray-800 fw-bold">Toplu Müşteri Yükle</h1>
+                <p class="mb-0 text-muted">Excel dosyanızdan hızlıca müşteri aktarın.</p>
+            </div>
+            <a asp-action="Index" class="btn btn-white shadow-sm text-primary fw-bold">
+                <i class="fas fa-arrow-left me-2"></i> Listeye Dön
+            </a>
+        </div>
+
+        <div class="card shadow-lg border-0 overflow-hidden">
+            <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                <div class="d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle text-success me-3">
+                        <i class="fas fa-file-excel fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-success mb-1">Excel veya CSV Dosyası Seçin</h5>
+                        <small class="text-muted">Desteklenen formatlar: .xlsx, .xls, .csv</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-body p-4">
+                <form asp-action="ImportExcel" method="post" enctype="multipart/form-data">
+                    
+                    <div class="alert alert-info border-0 bg-info bg-opacity-10 text-info mb-4">
+                        <div class="d-flex">
+                            <i class="fas fa-info-circle fa-lg mt-1 me-3"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Dosya Formatı Nasıl Olmalı?</h6>
+                                <p class="mb-0 small">
+                                    Excel veya CSV dosyanızın ilk satırında şu başlıklar bulunmalıdır (büyük/küçük harf duyarlı değildir):
+                                    <br>
+                                    <strong class="text-dark">Ad, Soyad, Email, Telefon, Toplam Tutar, Tarih</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="file" class="form-label fw-bold text-gray-700">Dosya Yükle</label>
+                        <input class="form-control form-control-lg" type="file" id="file" name="file" accept=".xlsx, .xls, .csv" required>
+                    </div>
+
+                    <!-- Progress Section -->
+                    <div id="progressSection" class="mb-4 d-none">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-sm font-weight-bold text-primary" id="progressText">Yükleniyor...</span>
+                            <span class="text-sm font-weight-bold text-primary" id="progressPercent">0%</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%" id="progressBar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted mt-2 d-block" id="statusText">Dosya sunucuya gönderiliyor...</small>
+                    </div>
+
+                    <hr class="my-4 border-light">
+
+                    <div class="d-grid">
+                        <button type="submit" id="btnUpload" class="btn btn-success btn-lg shadow-lg fw-bold">
+                            <i class="fas fa-upload me-2"></i> Yüklemeyi Başlat
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var fileInput = document.getElementById('file');
+            if (fileInput.files.length === 0) {
+                alert('Lütfen bir dosya seçin.');
+                return;
+            }
+
+            var file = fileInput.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            var xhr = new XMLHttpRequest();
+            xhr.timeout = 0; // Timeout'u devre dışı bırak (sınırsız bekleme süresi)
+            
+            // UI Elements
+            var progressSection = document.getElementById('progressSection');
+            var progressBar = document.getElementById('progressBar');
+            var progressPercent = document.getElementById('progressPercent');
+            var progressText = document.getElementById('progressText');
+            var statusText = document.getElementById('statusText');
+            var btnUpload = document.getElementById('btnUpload');
+
+            // Reset UI
+            progressSection.classList.remove('d-none');
+            progressBar.style.width = '0%';
+            progressPercent.innerText = '0%';
+            statusText.innerText = 'Dosya sunucuya gönderiliyor...';
+            btnUpload.disabled = true;
+            btnUpload.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Yükleniyor...';
+
+            xhr.open('POST', '@Url.Action("ImportExcel", "Customers")', true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            // Upload Progress
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    var percentComplete = Math.round((e.loaded / e.total) * 100);
+                    progressBar.style.width = percentComplete + '%';
+                    progressPercent.innerText = percentComplete + '%';
+                    
+                    if (percentComplete === 100) {
+                        statusText.innerText = 'Dosya sunucuda işleniyor, lütfen bekleyin... (Bu işlem dosya boyutuna göre zaman alabilir)';
+                        progressText.innerText = 'İşleniyor...';
+                        progressBar.classList.remove('bg-success');
+                        progressBar.classList.add('bg-info');
+                    }
+                }
+            };
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            statusText.innerText = 'İşlem tamamlandı!';
+                            statusText.classList.add('text-success');
+                            progressBar.classList.add('bg-success');
+                            progressBar.classList.remove('bg-info');
+                            
+                            // Show success alert or redirect
+                            alert(response.message);
+                            window.location.href = '@Url.Action("Index", "Customers")';
+                        } else {
+                            alert('Hata: ' + response.message);
+                            resetUI();
+                        }
+                    } catch (e) {
+                        console.error("JSON parse error", e);
+                        // Fallback if response is HTML (redirected page content)
+                         window.location.href = '@Url.Action("Index", "Customers")';
+                    }
+                } else {
+                    alert('Bir hata oluştu. Kod: ' + xhr.status);
+                    resetUI();
+                }
+            };
+
+            xhr.onerror = function() {
+                alert('Ağ hatası oluştu.');
+                resetUI();
+            };
+
+            xhr.send(formData);
+
+            function resetUI() {
+                btnUpload.disabled = false;
+                btnUpload.innerHTML = '<i class="fas fa-upload me-2"></i> Yüklemeyi Başlat';
+                statusText.innerText = 'Hata oluştu.';
+                statusText.classList.add('text-danger');
+                progressBar.classList.add('bg-danger');
+            }
+        });
+    </script>
+}
