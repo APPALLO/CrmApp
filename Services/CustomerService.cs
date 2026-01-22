@@ -23,9 +23,19 @@ public class CustomerService : ICustomerService
         _configuration = configuration;
     }
 
-    public async Task<PagedResult<CustomerDto>> GetCustomersAsync(int page = 1, int pageSize = 20)
+    public async Task<PagedResult<CustomerDto>> GetCustomersAsync(int page = 1, int pageSize = 20, string? searchTerm = null)
     {
-        var query = _context.Customers.AsNoTracking().OrderByDescending(c => c.CreatedAt);
+        var query = _context.Customers.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(c => c.FirstName.Contains(searchTerm) || 
+                                     c.LastName.Contains(searchTerm) || 
+                                     c.Email.Contains(searchTerm) ||
+                                     c.PhoneNumber.Contains(searchTerm));
+        }
+
+        query = query.OrderByDescending(c => c.CreatedAt);
         
         var totalCount = await query.CountAsync();
         

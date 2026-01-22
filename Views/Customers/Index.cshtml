@@ -37,10 +37,10 @@
             @if (Model.HasPreviousPage)
             {
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-page="1" title="İlk Sayfa">&laquo;</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-searchTerm="@ViewBag.SearchTerm" title="İlk Sayfa">&laquo;</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" title="Önceki">&lsaquo;</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" asp-route-searchTerm="@ViewBag.SearchTerm" title="Önceki">&lsaquo;</a>
                 </li>
             }
             else
@@ -70,7 +70,7 @@
             @if (startPage > 1)
             {
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-page="1">1</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-searchTerm="@ViewBag.SearchTerm">1</a>
                 </li>
                 @if (startPage > 2)
                 {
@@ -81,7 +81,7 @@
             @for (int i = startPage; i <= endPage; i++)
             {
                 <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchTerm="@ViewBag.SearchTerm">@i</a>
                 </li>
             }
 
@@ -92,7 +92,7 @@
                     <li class="page-item disabled"><span class="page-link">...</span></li>
                 }
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages">@Model.TotalPages</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages" asp-route-searchTerm="@ViewBag.SearchTerm">@Model.TotalPages</a>
                 </li>
             }
 
@@ -100,10 +100,10 @@
             @if (Model.HasNextPage)
             {
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" title="Sonraki">&rsaquo;</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" asp-route-searchTerm="@ViewBag.SearchTerm" title="Sonraki">&rsaquo;</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages" title="Son Sayfa">&raquo;</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages" asp-route-searchTerm="@ViewBag.SearchTerm" title="Son Sayfa">&raquo;</a>
                 </li>
             }
             else
@@ -124,16 +124,28 @@
 </div>
 
 <div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">Müşteri Listesi</h6>
-        <div class="dropdown no-arrow">
-            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                <div class="dropdown-header">İşlemler:</div>
-                <a class="dropdown-item" href="#">Excel İndir</a>
-                <a class="dropdown-item" href="#">PDF İndir</a>
+    <div class="card-header py-3">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-md-6">
+                <h6 class="m-0 font-weight-bold text-primary">Müşteri Listesi</h6>
+            </div>
+            <div class="col-md-6">
+                <form asp-action="Index" method="get" class="d-flex justify-content-end">
+                    <div class="input-group">
+                        <input type="text" name="searchTerm" class="form-control bg-light border-0 small" placeholder="Müşteri ara..." aria-label="Search" aria-describedby="basic-addon2" value="@ViewBag.SearchTerm">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" onclick="this.form.submit()">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                            @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+                            {
+                                <a asp-action="Index" class="btn btn-secondary ml-1" title="Filtreyi Temizle">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

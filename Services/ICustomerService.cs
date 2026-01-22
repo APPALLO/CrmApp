@@ -5,7 +5,7 @@ namespace CrmApp.Services;
 
 public interface ICustomerService
 {
-    Task<PagedResult<CustomerDto>> GetCustomersAsync(int page = 1, int pageSize = 20);
+    Task<PagedResult<CustomerDto>> GetCustomersAsync(int page = 1, int pageSize = 20, string? searchTerm = null);
     Task AddCustomerAsync(CreateCustomerDto customerDto);
     Task BulkInsertCustomersAsync(List<CreateCustomerDto> customerDtos);
     Task<List<CustomerDto>> GetActiveCustomersAsync(int days);

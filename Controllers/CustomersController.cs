@@ -74,9 +74,10 @@ public class CustomersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    public async Task<IActionResult> Index(int page = 1)
+    public async Task<IActionResult> Index(int page = 1, string? searchTerm = null)
     {
-        var result = await _customerService.GetCustomersAsync(page, 20); // Sayfa başı 20 kayıt
+        var result = await _customerService.GetCustomersAsync(page, 20, searchTerm); // Sayfa başı 20 kayıt
+        ViewBag.SearchTerm = searchTerm;
         return View(result);
     }
 
