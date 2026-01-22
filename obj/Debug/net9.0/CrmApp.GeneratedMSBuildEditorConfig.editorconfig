@@ -19,49 +19,49 @@ build_property.TargetFrameworkIdentifier = .NETCoreApp
 build_property.TargetFrameworkVersion = v9.0
 build_property.RootNamespace = CrmApp
 build_property.RootNamespace = CrmApp
-build_property.ProjectDir = C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\
+build_property.ProjectDir = c:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp
+build_property.MSBuildProjectDirectory = c:\Users\sakar\Desktop\Klasörler\html projeleri\CrmApp
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Customers/Create.cshtml]
+[c:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Customers/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Customers/Edit.cshtml]
+[c:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Customers/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Customers/ImportExcel.cshtml]
+[c:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Customers/ImportExcel.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXEltcG9ydEV4Y2VsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Customers/Index.cshtml]
+[c:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Customers/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Shared/Error.cshtml]
+[c:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Shared/_ValidationScriptsPartial.cshtml]
+[c:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/_ViewImports.cshtml]
+[c:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/_ViewStart.cshtml]
+[c:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Shared/_Layout.cshtml]
+[c:/Users/sakar/Desktop/Klasörler/html projeleri/CrmApp/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-apkvukh61d
